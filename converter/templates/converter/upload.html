@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Convert PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        img{
+            height: 30px;
+            width: 50px;
+        }
+        .nav-item {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .container1 {
+            width: 60%;
+            margin: 10px auto;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 60px;
+            position: relative;
+        }
+        
+        .container2 {
+            display: none; 
+            width: 40%;
+            margin: 10px auto;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 80px;
+            position: relative;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+        
+        label {
+            display: inline-block;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        label:hover {
+            background-color: #45a049;
+        }
+
+        button[type="submit"], .add-image-button {
+            background-color: #008CBA;
+            color: white;
+            margin: 40px;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: none; /* Initially hide the buttons */
+        }
+
+        button[type="submit"]:hover, .add-image-button:hover {
+            background-color: #007AAB;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            padding-right: 65px;
+        }
+
+        .bottom-container {
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 150px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #imageInputContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .image-container {
+            margin: 10px;
+            text-align: center;
+            width: 170px;
+            height: 230px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            display: none; /* Initially hide the container */
+        }
+
+        .image-preview {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            display: none; /* Initially hide the image */
+        }
+
+        .image-name {
+            font-size: 12px;
+            color: #666;
+            word-wrap: break-word;
+            padding: 5px;
+            text-align: center;
+            display: none; /* Initially hide the name */
+        }
+
+        .close-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #ff0000;
+            font-size: 20px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .rotate-button {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            cursor: pointer;
+            color: #ff0000;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .rotate-button:hover {
+            background-color: #e1b60d;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-info px-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="pdf.jpg"></img></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fs-4 text-center">
+                    <li class="nav-item">
+                        <a class="nav-link active text-light" aria-current="page" href="{% url 'donate' %}">Donate</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active text-light" href="{% url 'signup' %}">SignUp</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active text-light" href="{% url 'login' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>    
+
+    <form method="post" action="{% url 'upload' %}" enctype="multipart/form-data" id="imageForm">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-8 col-12">
+                <div class="container1">
+                    <h1>Upload JPG, JPEG, or PNG Image</h1>
+                    <p>Select an Image</p>
+                    <div id="imageInputContainer">
+                        <label for="imageSelector0">Select Image</label>
+                        <input type="file" id="imageSelector0" accept="image/*" name="file0" onchange="displayImagePreview(event, 0)">
+                        <div class="image-container" id="imageContainer0">
+                            <p id="imageName0" class="image-name"></p>
+                            <img id="imagePreview0" class="image-preview">
+                            <span class="close-icon" onclick="removeImage(0)">×</span>
+                            <button class="rotate-button" onclick="rotateImage(0, event)"><i class="fa fa-rotate-right"></i></button>
+                            <input type="hidden" id="imageRotation0" name="rotation0" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4 col-12">
+                <div class="container2" id="buttonContainer">
+                    <div class="button-container">
+                      <ol>
+                        <ul>
+                           <button type="button" class="add-image-button" id="addImageButton" onclick="addImageInput()">Add Image</button>
+                        </ul>
+                        <ul>
+                           <button type="submit" id="convertButton">Convert</button>
+                        </ul>
+                      </ol>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <script>
+        function displayImagePreview(event, index) {
+            const input = event.target;
+            const imageNameDisplay = document.getElementById('imageName' + index);
+            const preview = document.getElementById('imagePreview' + index);
+            const imageContainer = document.getElementById('imageContainer' + index);
+            const closeIcon = document.querySelector(`#imageContainer${index} .close-icon`);
+            const rotateButton = document.querySelector(`#imageContainer${index} .rotate-button`);
+
+            if (!imageNameDisplay) {
+                console.error(`Element with ID 'imageName${index}' not found.`);
+                return;
+            }
+
+            const file = input.files[0];
+            if (file) {
+                imageNameDisplay.textContent = file.name;
+                imageNameDisplay.style.display = 'block';
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    imageContainer.style.display = 'flex';
+                    closeIcon.style.display = 'block';
+                    rotateButton.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+                const label = document.querySelector(`label[for="imageSelector${index}"]`);
+                if (label) {
+                    label.style.display = 'none';
+                }
+                input.style.display = 'none';
+            } else {
+                imageNameDisplay.textContent = '';
+                preview.src = '#';
+                preview.style.display = 'none';
+                imageNameDisplay.style.display = 'none';
+                imageContainer.style.display = 'none';
+                closeIcon.style.display = 'none';
+                rotateButton.style.display = 'none';
+            }
+
+            // Show convertButton and addImageButton if it's the first image
+            const convertButton = document.getElementById('convertButton');
+            const addImageButton = document.getElementById('addImageButton');
+            const buttonContainer = document.getElementById('buttonContainer');
+            if (index === 0) {
+                convertButton.style.display = 'inline-block';
+                addImageButton.style.display = 'inline-block';
+                buttonContainer.style.display = 'block'; // Show the second container
+            }
+        }
+
+        function addImageInput() {
+            const imageInputContainer = document.getElementById('imageInputContainer');
+            const index = imageInputContainer.getElementsByClassName('image-container').length; // Calculate index based on existing images
+
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'image-container';
+            imageContainer.id = 'imageContainer' + index;
+
+            const label = document.createElement('label');
+            label.htmlFor = 'imageSelector' + index;
+            label.textContent = 'Select Image';
+
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.id = 'imageSelector' + index;
+            input.name = 'file' + index;
+            input.onchange = function(event) {
+                displayImagePreview(event, index);
+            };
+
+            const imageNameDisplay = document.createElement('p');
+            imageNameDisplay.className = 'image-name';
+            imageNameDisplay.id = 'imageName' + index;
+
+            const preview = document.createElement('img');
+            preview.className = 'image-preview';
+            preview.id = 'imagePreview' + index;
+
+            const closeIcon = document.createElement('span');
+            closeIcon.className = 'close-icon';
+            closeIcon.textContent = '×';
+            closeIcon.onclick = function() {
+                removeImage(index);
+            };
+
+            const rotateButton = document.createElement('button');
+            rotateButton.className = 'rotate-button';
+            rotateButton.onclick = function(event) {
+                rotateImage(index, event);
+            };
+
+            const icon = document.createElement('i');
+            icon.className = 'fa fa-rotate-right';
+
+            rotateButton.appendChild(icon);
+
+            const rotationInput = document.createElement('input');
+            rotationInput.type = 'hidden';
+            rotationInput.id = 'imageRotation' + index;
+            rotationInput.name = 'rotation' + index;
+            rotationInput.value = '0';
+
+            imageContainer.appendChild(label);
+            imageContainer.appendChild(input);
+            imageContainer.appendChild(imageNameDisplay);
+            imageContainer.appendChild(preview);
+            imageContainer.appendChild(closeIcon);
+            imageContainer.appendChild(rotateButton);
+            imageContainer.appendChild(rotationInput);
+
+            imageInputContainer.appendChild(imageContainer);
+            input.click();
+        }
+
+        function removeImage(index) {
+            const imageContainer = document.getElementById('imageContainer' + index);
+            imageContainer.remove();
+
+            // Hide convertButton and addImageButton if no images are left
+            const convertButton = document.getElementById('convertButton');
+            const addImageButton = document.getElementById('addImageButton');
+            const imageContainers = document.querySelectorAll('.image-container');
+            if (imageContainers.length === 0) {
+                convertButton.style.display = 'none';
+                addImageButton.style.display = 'none';
+                document.getElementById('buttonContainer').style.display = 'none'; // Hide the second container
+            }
+        }
+
+        function rotateImage(index, event) {
+            event.preventDefault();
+
+            const rotationInput = document.getElementById('imageRotation' + index);
+            let rotation = parseInt(rotationInput.value, 10) || 0;
+            rotation = (rotation + 90) % 360;
+            rotationInput.value = rotation;
+
+            const preview = document.getElementById('imagePreview' + index);
+            preview.style.transform = `rotate(${rotation}deg)`;
+        }
+    </script>
+</body>
+</html>

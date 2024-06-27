@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Convert PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container1 {
+            width: 70%;
+            margin: 20px auto;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            position: relative;
+        }
+        .container2 {
+            width: 20%;
+            margin: 20px auto;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            position: relative;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        label {
+            display: inline-block;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        label:hover {
+            background-color: #45a049;
+        }
+        button[type="submit"], .add-image-button {
+            background-color: #008CBA;
+            color: white;
+            margin: auto;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: none; /* Initially hide the buttons */
+        }
+        button[type="submit"]:hover, .add-image-button:hover {
+            background-color: #007AAB;
+        }
+        .top-buttons {
+            text-align: right;
+            padding: 10px;
+        }
+        .top-buttons a {
+            margin-left: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        a.button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .bottom-container {
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 150px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #imageInputContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .image-container {
+            margin: 10px;
+            text-align: center;
+            width: 170px;
+            height: 230px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            display: none; /* Initially hide the container */
+        }
+        .image-preview {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            display: none; /* Initially hide the image */
+        }
+        .image-name {
+            font-size: 12px;
+            color: #666;
+            word-wrap: break-word;
+            padding: 5px;
+            text-align: center;
+            display: none; /* Initially hide the name */
+        }
+        .close-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #ff0000;
+            font-size: 20px;
+            font-weight: bold;
+            display: none;
+        }
+        .rotate-button {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            cursor: pointer;
+            color: #ff0000;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+        }
+        .rotate-button:hover {
+            background-color: #e1b60d;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-buttons">
+        <a href="{% url 'upload' %}" class="button">Back</a>
+        <a href="{% url 'donate' %}" class="button">Donate</a>
+        <a href="{% url 'signup' %}" class="button">Sign Up</a>
+        <a href="{% url 'login' %}" class="button">Login</a>
+    </div>
+    <form method="post" action="{% url 'upload' %}" enctype="multipart/form-data" id="imageForm">
+        {% csrf_token %}
+        <div class="container1">
+            <h1>Upload JPG, JPEG, or PNG Image</h1>
+            <p>Select an Image</p>
+            <div id="imageInputContainer">
+                <label for="imageSelector0">Select Image</label>
+                <input type="file" id="imageSelector0" accept="image/*" name="file0" onchange="displayImagePreview(event, 0)">
+                <div class="image-container" id="imageContainer0">
+                    <p id="imageName0" class="image-name"></p>
+                    <img id="imagePreview0" class="image-preview">
+                    <span class="close-icon" onclick="removeImage(0)">×</span>
+                    <button class="rotate-button" onclick="rotateImage(0, event)"><i class="fa fa-rotate-right"></i></button>
+                    <input type="hidden" id="imageRotation0" name="rotation0" value="0">
+                </div>
+            </div>
+        </div>
+        <div class="container2">
+            <div class="button-container">
+                <button type="button" class="add-image-button" id="addImageButton" onclick="addImageInput()">Add Image</button>
+                <button type="submit" id="convertButton">Convert</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        let imageCounter = 1;
+        const convertButton = document.getElementById('convertButton');
+        const addImageButton = document.getElementById('addImageButton');
+
+        function displayImagePreview(event, index) {
+            const input = event.target;
+            const imageNameDisplay = document.getElementById('imageName' + index);
+            const preview = document.getElementById('imagePreview' + index);
+            const imageContainer = document.getElementById('imageContainer' + index);
+            const closeIcon = document.querySelector(`#imageContainer${index} .close-icon`);
+            const rotateButton = document.querySelector(`#imageContainer${index} .rotate-button`);
+
+            const file = input.files[0];
+            if (file) {
+                imageNameDisplay.textContent = file.name;
+                imageNameDisplay.style.display = 'block';
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    imageContainer.style.display = 'flex';
+                    closeIcon.style.display = 'block';
+                    rotateButton.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+                const label = document.querySelector(`label[for="imageSelector${index}"]`);
+                label.style.display = 'none';
+                input.style.display = 'none';
+
+
+                if (index === 0) {
+                    convertButton.style.display = 'inline-block';
+                    addImageButton.style.display = 'inline-block';
+                }
+            } else {
+                imageNameDisplay.textContent = '';
+                preview.src = '#';
+                preview.style.display = 'none';
+                imageNameDisplay.style.display = 'none';
+                imageContainer.style.display = 'none';
+                closeIcon.style.display = 'none';
+                rotateButton.style.display = 'none';
+            }
+        }
+
+        function addImageInput() {
+            const imageInputContainer = document.getElementById('imageInputContainer');
+
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'image-container';
+            imageContainer.id = 'imageContainer' + imageCounter;
+
+            const label = document.createElement('label');
+            label.htmlFor = 'imageSelector' + imageCounter;
+            label.textContent = 'Select Image';
+
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.id = 'imageSelector' + imageCounter;
+            input.name = 'file' + imageCounter;
+            input.onchange = function(event) {
+                displayImagePreview(event, imageCounter - 1);
+            };
+
+            const imageNameDisplay = document.createElement('p');
+            imageNameDisplay.className = 'image-name';
+            imageNameDisplay.id = 'imageName' + imageCounter;
+
+            const preview = document.createElement('img');
+            preview.className = 'image-preview';
+            preview.id = 'imagePreview' + imageCounter;
+
+            const closeIcon = document.createElement('span');
+            closeIcon.className = 'close-icon';
+            closeIcon.textContent = '×';
+            closeIcon.onclick = function() {
+                removeImage(imageCounter - 1);
+            };
+
+            const rotateButton = document.createElement('button');
+            rotateButton.className = 'rotate-button';
+            rotateButton.onclick = function(event) {
+                rotateImage(imageCounter - 1, event);
+            };
+
+            const icon = document.createElement('i');
+            icon.className = 'fa fa-rotate-right';
+
+            rotateButton.appendChild(icon);
+
+            const rotationInput = document.createElement('input');
+            rotationInput.type = 'hidden';
+            rotationInput.id = 'imageRotation' + imageCounter;
+            rotationInput.name = 'rotation' + imageCounter;
+            rotationInput.value = '0';
+
+            imageContainer.appendChild(label);
+            imageContainer.appendChild(input);
+            imageContainer.appendChild(imageNameDisplay);
+            imageContainer.appendChild(preview);
+            imageContainer.appendChild(closeIcon);
+            imageContainer.appendChild(rotateButton);
+            imageContainer.appendChild(rotationInput);
+
+            imageInputContainer.appendChild(imageContainer);
+            input.click();
+            imageCounter++;
+        }
+
+        function removeImage(index) {
+            const imageContainer = document.getElementById('imageContainer' + index);
+            imageContainer.remove();
+        }
+
+        function rotateImage(index, event) {
+            event.preventDefault();
+
+            const rotationInput = document.getElementById('imageRotation' + index);
+            let rotation = parseInt(rotationInput.value, 10) || 0;
+            rotation = (rotation + 90) % 360;
+            rotationInput.value = rotation;
+
+            const preview = document.getElementById('imagePreview' + index);
+            preview.style.transform = `rotate(${rotation}deg)`;
+        }
+    </script>
+</body>
+</html>
